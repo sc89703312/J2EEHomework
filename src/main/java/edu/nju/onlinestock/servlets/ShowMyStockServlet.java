@@ -23,15 +23,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
+import main.java.edu.nju.onlinestock.model.Result;
 import main.java.edu.nju.onlinestock.model.Stock;
+import main.java.edu.nju.onlinestock.model.Student;
+import main.java.edu.nju.onlinestock.utils.JDBCConnector;
 
-/*
- ��Servletδʹ��DAO��MVC��ƣ�Ҫ��ֻ���ѵ�¼�Ŀͻ����ܲ鿴�Լ�����Ĺ�Ʊ(����Դ)��
- ʵ�֣��ѵ�¼�û������ܲ鿴��
-            δ��¼�û���תȥ��¼��
-            �ӵ�¼�ύ���˵��û�������session�����ٵ�¼״̬����������Գ��ε�¼���û����򴴽�cookie�����鿴�Լ�����Ĺ�Ʊ��
-            ͨ��ˢ��ҳ��/���Ѵ���session��ҳ����ʣ���鿴�Լ�����Ĺ�Ʊ��
- */
 
 /**
  * Servlet implementation class StockListServlet
@@ -50,21 +46,7 @@ public class ShowMyStockServlet extends HttpServlet {
 	}
 
 	public void init() {
-		InitialContext jndiContext = null;
-
-		Properties properties = new Properties();
-		properties.put(javax.naming.Context.PROVIDER_URL, "jnp:///");
-		properties.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
-		try {
-			jndiContext = new InitialContext(properties);
-			datasource = (DataSource) jndiContext.lookup("java:comp/env/jdbc/onlinestock");
-			System.out.println("got context");
-			System.out.println("About to get ds---ShowMyStock");
-		} catch (NamingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+        datasource = JDBCConnector.getDataSourceInstance();
 	}
 
 	/**
@@ -88,66 +70,18 @@ public class ShowMyStockServlet extends HttpServlet {
 	}
 
 	private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		resp.setContentType("text/html;charset=utf-8");
-		req.setCharacterEncoding("UTF-8");
 		
 		HttpSession session = req.getSession(false);
-		boolean cookieFound = false;
-		System.out.println(req.getParameter("login") + " req");
-		Cookie cookie = null;
-		Cookie[] cookies = req.getCookies();
-		if (null != cookies) {
-			// Look through all the cookies and see if the
-			// cookie with the login info is there.
-			for (int i = 0; i < cookies.length; i++) {
-				cookie = cookies[i];
-				if (cookie.getName().equals("LoginCookie")) {
-					cookieFound = true;
-					break;
-				}
-			}
-		}
 
 		if (session == null) {
-			String loginValue = req.getParameter("login");
-			boolean isLoginAction = (null == loginValue) ? false : true;
-
-			System.out.println(loginValue + " session null");
-			if (isLoginAction) { // User is logging in
-				if (cookieFound) { // If the cookie exists update the value only
-					// if changed
-					if (!loginValue.equals(cookie.getValue())) {
-						cookie.setValue(loginValue);
-						resp.addCookie(cookie);
-					}
-				} else {
-					// If the cookie does not exist, create it and set value
-					cookie = new Cookie("LoginCookie", loginValue);
-					cookie.setMaxAge(Integer.MAX_VALUE);
-					System.out.println("Add cookie");
-					resp.addCookie(cookie);
-				}
-
-				// create a session to show that we are logged in
-				session = req.getSession(true);
-				session.setAttribute("login", loginValue);
-
-				req.setAttribute("login", loginValue);
-				getStockList(req, resp);
-				displayMyStocklistPage(req, resp);
-				displayLogoutPage(req, resp);
-
-			} else {
-				System.out.println(loginValue + " session null");
-				// Display the login page. If the cookie exists, set login
-				resp.sendRedirect(req.getContextPath() + "/Login");
-			}
+			//如果没有会话,就返回登录界面去创建会话
+			resp.sendRedirect(req.getContextPath() + "/Login");
 		} else {
-			// ��δע�������¼��ظ�ҳ�棬session��Ϊ��
-			String loginValue = (String) session.getAttribute("login");
+
+			String loginValue = (String) session.getAttribute("studentId");
 			System.out.println(loginValue + " session");
 
-			req.setAttribute("login", loginValue);
+			req.setAttribute("studentId", loginValue);
 			getStockList(req, resp);
 			displayMyStocklistPage(req, resp);
 			displayLogoutPage(req, resp);
@@ -169,19 +103,16 @@ public class ShowMyStockServlet extends HttpServlet {
 		}
 
 		try {
-			stmt = connection.prepareStatement("select stockid from mystock where userid=?");
-			stmt.setString(1, (String) req.getAttribute("login"));
+			stmt = connection.prepareStatement("select * from result where student_id=?");
+			stmt.setString(1, (String) req.getAttribute("studentId"));
 			result = stmt.executeQuery();
 			while (result.next()) {
-				Stock stock = new Stock();
-				stock.setId(result.getInt("stockid"));
-				/*
-				 * stock.setCompanyName(result.getString(2));
-				 * stock.setType(result.getString(3));
-				 * stock.setPrice(result.getDouble(4));
-				 * stock.setDate(result.getDate("date"));
-				 */
-				list.add(stock);
+                Result examResult = new Result();
+                examResult.setId(result.getInt("id"));
+                examResult.setStudent_id(result.getInt("student_id"));
+                examResult.setExam_id(result.getInt("exam_id"));
+                examResult.setResult(result.getInt("result"));
+				list.add(examResult);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -199,12 +130,10 @@ public class ShowMyStockServlet extends HttpServlet {
 		
 		
 		PrintWriter out = res.getWriter();
-		// ע��Logout
 		out.println("<form method='GET' action='" + res.encodeURL(req.getContextPath() + "/Login") + "'>");
 		out.println("</p>");
 		out.println("<input type='submit' name='Logout' value='Logout'>");
 		out.println("</form>");
-		out.println("<p>Servlet is version @version@</p>");
 		out.println("</p>You are visitor number " + webCounter);
 		out.println("</body></html>");
 
@@ -220,17 +149,18 @@ public class ShowMyStockServlet extends HttpServlet {
 		out.println("<td width='650' height='80' background='" + req.getContextPath() + "/image/top.jpg'>&nbsp;</td>");
 		out.println("</tr>");
 		out.println("</table>");
-		out.println("<p>Welcome " + req.getAttribute("login") + "</p>");
+		out.println("<p>Welcome " + req.getAttribute("studentId") + "</p>");
 
-		out.println("My Stock List:  ");
+		out.println("My Exam List:  ");
 		System.out.println("stocklist");
 		for (int i = 0; i < list.size(); i++) {
-			Stock stock = (Stock) list.get(i);
-			out.println(stock.getId());
+			Result result = (Result) list.get(i);
+
+            out.println("<br/>");
+			out.println(result.getExam_id()+" : "+result.getResult());
 
 		}
 		out.println("</p>");
-		// ���here��ˢ�¸�ҳ�棬�Ự��Ч
 		out.println("Click <a href='" + res.encodeURL(req.getRequestURI()) + "'>here</a> to reload this page.<br>");
 	}
 
