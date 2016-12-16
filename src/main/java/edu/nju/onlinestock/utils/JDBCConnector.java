@@ -11,32 +11,31 @@ import java.util.Properties;
  */
 public class JDBCConnector {
 
-    private static DataSource dataSource = null;
+    //private static DataSource dataSource = null;
 
     private JDBCConnector(){
 
     }
 
     public static DataSource getDataSourceInstance(){
-        if (dataSource == null) {
-            InitialContext jndiContext = null;
-            Properties properties = new Properties();
-            properties.put(javax.naming.Context.PROVIDER_URL, "jnp:///");
-            properties.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
-            try {
-                jndiContext = new InitialContext(properties);
-                dataSource = (DataSource) jndiContext.lookup("java:comp/env/jdbc/onlinestock");
-                System.out.println("got context");
-                System.out.println("About to get ds---ShowMyStock");
-            } catch (NamingException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
 
-            return dataSource;
+        DataSource dataSource = null;
 
-        } else{
-            return dataSource;
+        InitialContext jndiContext = null;
+        Properties properties = new Properties();
+        properties.put(javax.naming.Context.PROVIDER_URL, "jnp:///");
+        properties.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
+        try {
+            jndiContext = new InitialContext(properties);
+            dataSource = (DataSource) jndiContext.lookup("java:comp/env/jdbc/onlinestock");
+            System.out.println("got context");
+            System.out.println("About to get ds---ShowMyStock");
+        } catch (NamingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+
+        return dataSource;
+
     }
 }

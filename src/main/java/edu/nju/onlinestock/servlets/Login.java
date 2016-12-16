@@ -1,9 +1,16 @@
 package main.java.edu.nju.onlinestock.servlets;
 
+import com.sun.deploy.net.HttpRequest;
+import main.java.edu.nju.onlinestock.model.Result;
 import main.java.edu.nju.onlinestock.utils.JDBCConnector;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.naming.InitialContext;
@@ -101,8 +108,45 @@ public class Login extends HttpServlet {
         String studentId = request.getParameter("studentId");
         HttpSession session = request.getSession(true);
         session.setAttribute("studentId", studentId);
+        session.setMaxInactiveInterval(3600);
 
-        response.sendRedirect(request.getContextPath()+"/ShowMyStockServlet");
+        //response.sendRedirect(request.getContextPath()+"/ShowMyStockServlet");
+
+        verifyStudent(request, response, studentId);
     }
 
+    private void verifyStudent(HttpServletRequest req, HttpServletResponse resp, String studentId){
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        ResultSet result = null;
+        ArrayList list = new ArrayList();
+        try {
+            connection = dataSource.getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            stmt = connection.prepareStatement("select * from student where id=?");
+            stmt.setString(1, studentId);
+            result = stmt.executeQuery();
+            if(result.next()){
+                result.close();
+                stmt.close();
+                connection.close();
+                resp.sendRedirect(req.getContextPath()+"/ShowMyStockServlet");
+            }else{
+                resp.sendError(HttpServletResponse.SC_FORBIDDEN, "User Id not Found");
+                result.close();
+                stmt.close();
+                connection.close();
+                return;
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
 }

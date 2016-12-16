@@ -35,7 +35,7 @@ import main.java.edu.nju.onlinestock.utils.JDBCConnector;
 @WebServlet("/ShowMyStockServlet")
 public class ShowMyStockServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private DataSource datasource = null;
+	private DataSource dataSource = null;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -46,7 +46,7 @@ public class ShowMyStockServlet extends HttpServlet {
 	}
 
 	public void init() {
-        datasource = JDBCConnector.getDataSourceInstance();
+        dataSource = JDBCConnector.getDataSourceInstance();
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class ShowMyStockServlet extends HttpServlet {
 		ResultSet result = null;
 		ArrayList list = new ArrayList();
 		try {
-			connection = datasource.getConnection();
+			connection = dataSource.getConnection();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -114,6 +114,11 @@ public class ShowMyStockServlet extends HttpServlet {
                 examResult.setResult(result.getInt("result"));
 				list.add(examResult);
 			}
+
+            result.close();
+            stmt.close();
+            connection.close();
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
