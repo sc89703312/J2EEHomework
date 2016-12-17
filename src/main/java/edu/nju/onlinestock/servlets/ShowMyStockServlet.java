@@ -13,6 +13,7 @@ import java.util.Properties;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -131,6 +132,7 @@ public class ShowMyStockServlet extends HttpServlet {
 	public void displayLogoutPage(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		ServletContext Context= getServletContext();
 		int webCounter= Integer.parseInt((String) Context.getAttribute("webCounter"));
+		int visitorCounter = Integer.parseInt((String) Context.getAttribute("visitorCounter"));
 		System.out.println("XXXservlet pageCounter\n");
 		
 		
@@ -139,7 +141,8 @@ public class ShowMyStockServlet extends HttpServlet {
 		out.println("</p>");
 		out.println("<input type='submit' name='Logout' value='Logout'>");
 		out.println("</form>");
-		out.println("</p>You are visitor number " + webCounter);
+		out.println("</p>Now the number of logged in is: " + webCounter);
+        out.println("</p>Now the number of visitor is: " + visitorCounter);
 		out.println("</body></html>");
 
 	}
@@ -148,12 +151,17 @@ public class ShowMyStockServlet extends HttpServlet {
 		ArrayList list = (ArrayList) req.getAttribute("list"); // resp.sendRedirect(req.getContextPath()+"/MyStockList");
 
 		PrintWriter out = res.getWriter();
-		out.println("<html><body>");
-		out.println("<table width='650' border='0' >");
-		out.println("<tr>");
-		out.println("<td width='650' height='80' background='" + req.getContextPath() + "/image/top.jpg'>&nbsp;</td>");
-		out.println("</tr>");
-		out.println("</table>");
+
+        RequestDispatcher dispatcher
+                =req.getRequestDispatcher("/user/result.html");
+        if (dispatcher!= null){
+            try {
+                dispatcher.include(req,res);
+            }catch (Exception e){
+
+            }
+        }
+
 		out.println("<p>Welcome " + req.getAttribute("studentId") + "</p>");
 
 		out.println("My Exam List:  ");

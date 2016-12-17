@@ -51,52 +51,41 @@ public class Login extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 
-
-        //获取上下文环境
-		ServletContext Context= getServletContext();
-
-        //获取上下文环境中的webCounter数量
-        int webCounter= Integer.parseInt((String) Context.getAttribute("webCounter"));
-
-        //如果不是登出跳转到这张界面 就让webCounter数量自增 重新写回
-        if (null == request.getParameter("Logout")) {
-			System.out.println("pageCounter++\n");
-			webCounter++;
-			Context.setAttribute("webCounter", Integer.toString(webCounter));
-		}
-
-        //取出cookie中存放的LoginCookie的用户登陆名称
-		String login="";
 		HttpSession session = request.getSession(false);
-		Cookie cookie = null;
-        Cookie[] cookies = request.getCookies();
-        		
-        if (null != cookies) {
-            // Look through all the cookies and see if the
-            // cookie with the login info is there.
-            for (int i = 0; i < cookies.length; i++) {
-                cookie = cookies[i];
-                if (cookie.getName().equals("LoginCookie")) {
-                    login=cookie.getValue();
-                    break;
-                }
-            }
-        }
-    
-        // 如果是通过登出跳转到的这张界面 那么让会话失效
+
         if (null != request.getParameter("Logout")) {
+
             if (null != session) {
+                ServletContext Context= getServletContext();
+                int webCounter= Integer.parseInt((String) Context.getAttribute("webCounter"));
+                webCounter--;
+                Context.setAttribute("webCounter", Integer.toString(webCounter));
+
             	session.invalidate();
                 session = null;
             }
+
+            response.sendRedirect(request.getContextPath()+"/Login");
         }
 
+        if(session != null){
+            response.sendRedirect(request.getContextPath()+"/ShowMyStockServlet");
+        }
 
         PrintWriter pw = response.getWriter();
+
         RequestDispatcher dispatcher
                 =request.getRequestDispatcher("/user/login.html");
         if (dispatcher!= null)
             dispatcher.include(request,response);
+
+
+        ServletContext Context= getServletContext();
+        int visitorCounter= Integer.parseInt((String) Context.getAttribute("visitorCounter"));
+        int webCounter = Integer.parseInt((String) Context.getAttribute("webCounter"));
+
+        pw.println("<p>The number of logged in is: "+webCounter+"</p>");
+        pw.println("<p>The number of visitors is: "+visitorCounter+"</p>");
 	}
 
 	/**
@@ -109,8 +98,6 @@ public class Login extends HttpServlet {
         HttpSession session = request.getSession(true);
         session.setAttribute("studentId", studentId);
         session.setMaxInactiveInterval(3600);
-
-        //response.sendRedirect(request.getContextPath()+"/ShowMyStockServlet");
 
         verifyStudent(request, response, studentId);
     }
@@ -135,6 +122,13 @@ public class Login extends HttpServlet {
                 result.close();
                 stmt.close();
                 connection.close();
+
+                //登录成功后增加在线登录人数
+                ServletContext Context= getServletContext();
+                int webCounter= Integer.parseInt((String) Context.getAttribute("webCounter"));
+                webCounter++;
+                Context.setAttribute("webCounter", Integer.toString(webCounter));
+
                 resp.sendRedirect(req.getContextPath()+"/ShowMyStockServlet");
             }else{
                 resp.sendError(HttpServletResponse.SC_FORBIDDEN, "User Id not Found");

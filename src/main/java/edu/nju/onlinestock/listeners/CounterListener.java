@@ -32,9 +32,9 @@ public class CounterListener implements ServletContextListener, ServletContextAt
      */
     public void contextInitialized(ServletContextEvent cse) {
     	try {
-    		System.out.println("Reading Start"); 		
+    		System.out.println("Reading Start");
     		BufferedReader reader = new BufferedReader(new FileReader(counterFilePath));
-    		counter = Integer.parseInt( reader.readLine() );
+    		counter = 0;
     		reader.close();
     		System.out.println("Reading " + counter);}
     	catch (Exception e) {
@@ -42,6 +42,7 @@ public class CounterListener implements ServletContextListener, ServletContextAt
     	}
     	ServletContext servletContext= cse.getServletContext();
     	servletContext.setAttribute("webCounter", Integer.toString(counter));
+		servletContext.setAttribute("visitorCounter", Integer.toString(counter));
     	System.out.println("Application initialized");
     }
 
@@ -57,7 +58,6 @@ public class CounterListener implements ServletContextListener, ServletContextAt
      */
     public void attributeReplaced(ServletContextAttributeEvent scae) {
     	System.out.println("ServletContextattribute replaced");
-    	writeCounter(scae);
     }
 
 	/**
@@ -73,18 +73,5 @@ public class CounterListener implements ServletContextListener, ServletContextAt
     public void contextDestroyed(ServletContextEvent arg0) {
     	System.out.println("Application shut down");
     }
-	
-    synchronized void writeCounter(ServletContextAttributeEvent scae) {
-    	ServletContext servletContext= scae.getServletContext();
-    	counter = Integer.parseInt((String) servletContext.getAttribute("webCounter"));
 
-    	try {
-    		BufferedWriter writer = new BufferedWriter(new FileWriter(counterFilePath));
-    		writer.write(Integer.toString(counter));
-    		writer.close();
-    		System.out.println("Writing");
-    	}catch (Exception e) {
-    		System.out.println(e.toString());
-    	}
-    }
 }
