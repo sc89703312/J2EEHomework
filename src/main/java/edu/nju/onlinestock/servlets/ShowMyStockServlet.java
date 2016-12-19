@@ -80,9 +80,11 @@ public class ShowMyStockServlet extends HttpServlet {
 		} else {
 
 			String loginValue = (String) session.getAttribute("studentId");
+            String test = (String) session.getAttribute("Chinese");
 			System.out.println(loginValue + " session");
 
 			req.setAttribute("studentId", loginValue);
+            req.setAttribute("Chinese",test);
 			getStockList(req, resp);
 			displayMyStocklistPage(req, resp);
 			displayLogoutPage(req, resp);
@@ -163,16 +165,22 @@ public class ShowMyStockServlet extends HttpServlet {
         }
 
 		out.println("<p>Welcome " + req.getAttribute("studentId") + "</p>");
+        out.println("<p>测试表单中文 : "+req.getAttribute("Chinese")+"</p>");
 
-		out.println("My Exam List:  ");
+		out.println("我的考试记录:  ");
 		System.out.println("stocklist");
+        out.println("<ul>");
 		for (int i = 0; i < list.size(); i++) {
 			Result result = (Result) list.get(i);
-
-            out.println("<br/>");
-			out.println(result.getExam_id()+" : "+result.getResult());
+            System.out.println(result.getResult());
+            if(result.getResult() != -1){
+                out.println("<li>"+result.getExam_id()+" : "+result.getResult()+"</li>");
+            }else{
+                out.println("<li style=\"color: red\">"+result.getExam_id()+" : "+"此次考试未参加!"+"</li>");
+            }
 
 		}
+        out.println("</ul>");
 		out.println("</p>");
 		out.println("Click <a href='" + res.encodeURL(req.getRequestURI()) + "'>here</a> to reload this page.<br>");
 	}

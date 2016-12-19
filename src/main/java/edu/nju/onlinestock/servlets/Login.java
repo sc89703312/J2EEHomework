@@ -95,8 +95,10 @@ public class Login extends HttpServlet {
 		// TODO Auto-generated method stub
 
         String studentId = request.getParameter("studentId");
+        String test = request.getParameter("Chinese");
         HttpSession session = request.getSession(true);
         session.setAttribute("studentId", studentId);
+        session.setAttribute("Chinese", test);
         session.setMaxInactiveInterval(3600);
 
         verifyStudent(request, response, studentId);
