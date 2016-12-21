@@ -80,11 +80,9 @@ public class ShowMyStockServlet extends HttpServlet {
 		} else {
 
 			String loginValue = (String) session.getAttribute("studentId");
-            String test = (String) session.getAttribute("Chinese");
 			System.out.println(loginValue + " session");
 
 			req.setAttribute("studentId", loginValue);
-            req.setAttribute("Chinese",test);
 			getStockList(req, resp);
 			displayMyStocklistPage(req, resp);
 			displayLogoutPage(req, resp);
@@ -133,10 +131,8 @@ public class ShowMyStockServlet extends HttpServlet {
 
 	public void displayLogoutPage(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		ServletContext Context= getServletContext();
-		int webCounter= Integer.parseInt((String) Context.getAttribute("webCounter"));
-		int visitorCounter = Integer.parseInt((String) Context.getAttribute("visitorCounter"));
-		System.out.println("XXXservlet pageCounter\n");
-		
+		int visitorCounter= (int) Context.getAttribute("visitorCounter");
+		int webCounter = (int) Context.getAttribute("webCounter");
 		
 		PrintWriter out = res.getWriter();
 		out.println("<form method='GET' action='" + res.encodeURL(req.getContextPath() + "/Login") + "'>");
@@ -165,7 +161,6 @@ public class ShowMyStockServlet extends HttpServlet {
         }
 
 		out.println("<p>Welcome " + req.getAttribute("studentId") + "</p>");
-        out.println("<p>测试表单中文 : "+req.getAttribute("Chinese")+"</p>");
 
 		out.println("我的考试记录:  ");
 		System.out.println("stocklist");

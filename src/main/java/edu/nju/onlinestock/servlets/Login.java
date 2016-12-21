@@ -56,11 +56,6 @@ public class Login extends HttpServlet {
         if (null != request.getParameter("Logout")) {
 
             if (null != session) {
-                ServletContext Context= getServletContext();
-                int webCounter= Integer.parseInt((String) Context.getAttribute("webCounter"));
-                webCounter--;
-                Context.setAttribute("webCounter", Integer.toString(webCounter));
-
             	session.invalidate();
                 session = null;
             }
@@ -81,8 +76,8 @@ public class Login extends HttpServlet {
 
 
         ServletContext Context= getServletContext();
-        int visitorCounter= Integer.parseInt((String) Context.getAttribute("visitorCounter"));
-        int webCounter = Integer.parseInt((String) Context.getAttribute("webCounter"));
+        int visitorCounter= (int) Context.getAttribute("visitorCounter");
+        int webCounter = (int) Context.getAttribute("webCounter");
 
         pw.println("<p>The number of logged in is: "+webCounter+"</p>");
         pw.println("<p>The number of visitors is: "+visitorCounter+"</p>");
@@ -95,12 +90,6 @@ public class Login extends HttpServlet {
 		// TODO Auto-generated method stub
 
         String studentId = request.getParameter("studentId");
-        String test = request.getParameter("Chinese");
-        HttpSession session = request.getSession(true);
-        session.setAttribute("studentId", studentId);
-        session.setAttribute("Chinese", test);
-        session.setMaxInactiveInterval(3600);
-
         verifyStudent(request, response, studentId);
     }
 
@@ -126,10 +115,10 @@ public class Login extends HttpServlet {
                 connection.close();
 
                 //登录成功后增加在线登录人数
-                ServletContext Context= getServletContext();
-                int webCounter= Integer.parseInt((String) Context.getAttribute("webCounter"));
-                webCounter++;
-                Context.setAttribute("webCounter", Integer.toString(webCounter));
+                HttpSession session = req.getSession(true);
+                session.setAttribute("studentId", studentId);
+
+                session.setMaxInactiveInterval(3600);
 
                 resp.sendRedirect(req.getContextPath()+"/ShowMyStockServlet");
             }else{

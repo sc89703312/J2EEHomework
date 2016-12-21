@@ -35,38 +35,62 @@ public class Home extends HttpServlet{
 
         HttpSession session = request.getSession(false);
 
-        ServletContext Context= getServletContext();
-        int visitorCounter= Integer.parseInt((String) Context.getAttribute("visitorCounter"));
-        int webCounter = Integer.parseInt((String) Context.getAttribute("webCounter"));
-
         PrintWriter pw = response.getWriter();
         RequestDispatcher dispatcher
                 =request.getRequestDispatcher("/user/home.html");
         if (dispatcher!= null)
             dispatcher.include(request,response);
 
-        if(session!=null){
-            System.out.println("session not null");
-            if(request.getParameter("Login")!=null){
-                response.sendRedirect(request.getContextPath()+"/Login");
-            }
-        }else{
 
+        if(session!=null){
             if(request.getParameter("Login")!=null){
-                System.out.println("Login!");
-                visitorCounter--;
-                Context.setAttribute("visitorCounter", Integer.toString(visitorCounter));
-                response.sendRedirect(request.getContextPath()+"/Login");
-            }else{
-                if(request.getParameter("Exit")!=null){
-                    visitorCounter--;
-                    Context.setAttribute("visitorCounter", Integer.toString(visitorCounter));
-                }else{
-                    visitorCounter++;
-                    Context.setAttribute("visitorCounter", Integer.toString(visitorCounter));
+                if((Boolean)session.getAttribute("visitor")){
+                    session.invalidate();
+                    session = null;
                 }
+                response.sendRedirect(request.getContextPath()+"/Login");
             }
+
+            if(request.getParameter("Exit")!=null){
+                session.invalidate();
+                session = null;
+                return;
+            }
+
+        }else{
+            session = request.getSession(true);
+            session.setAttribute("visitor", true);
         }
+
+
+
+//        if(session!=null){
+//            System.out.println("session not null");
+//            if(request.getParameter("Login")!=null){
+//                response.sendRedirect(request.getContextPath()+"/Login");
+//            }
+//        }else{
+//
+//            if(request.getParameter("Login")!=null){
+//                System.out.println("Login!");
+//                visitorCounter--;
+//                Context.setAttribute("visitorCounter", Integer.toString(visitorCounter));
+//                response.sendRedirect(request.getContextPath()+"/Login");
+//            }else{
+//                if(request.getParameter("Exit")!=null){
+//                    visitorCounter--;
+//                    Context.setAttribute("visitorCounter", Integer.toString(visitorCounter));
+//                }else{
+//                    visitorCounter++;
+//                    Context.setAttribute("visitorCounter", Integer.toString(visitorCounter));
+//                }
+//            }
+//        }
+
+        ServletContext Context= getServletContext();
+        int visitorCounter= (int) Context.getAttribute("visitorCounter");
+        int webCounter = (int) Context.getAttribute("webCounter");
+
 
         pw.println("<p>The number of logged in is: "+webCounter+"</p>");
         pw.println("<p>The number of visitors is: "+visitorCounter+"</p>");

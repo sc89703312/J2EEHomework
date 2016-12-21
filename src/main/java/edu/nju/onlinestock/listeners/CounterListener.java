@@ -41,8 +41,8 @@ public class CounterListener implements ServletContextListener, ServletContextAt
     		System.out.println(e.toString());
     	}
     	ServletContext servletContext= cse.getServletContext();
-    	servletContext.setAttribute("webCounter", Integer.toString(counter));
-		servletContext.setAttribute("visitorCounter", Integer.toString(counter));
+    	servletContext.setAttribute("webCounter", 0);
+		servletContext.setAttribute("visitorCounter", 0);
     	System.out.println("Application initialized");
     }
 

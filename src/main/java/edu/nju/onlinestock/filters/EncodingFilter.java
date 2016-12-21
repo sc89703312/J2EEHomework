@@ -28,6 +28,7 @@ public class EncodingFilter implements Filter{
 
         //System.out.println("before encoding " + encoding + " filter！");
         request.setCharacterEncoding(encoding);
+
         response.setCharacterEncoding(encoding);
         response.setContentType("text/html;charset="+encoding);
         chain.doFilter(request, response);
