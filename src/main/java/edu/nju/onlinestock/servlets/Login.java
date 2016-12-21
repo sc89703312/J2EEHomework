@@ -117,7 +117,7 @@ public class Login extends HttpServlet {
                 //登录成功后增加在线登录人数
                 HttpSession session = req.getSession(true);
                 session.setAttribute("studentId", studentId);
-
+                session.setAttribute("visitor", false);
                 session.setMaxInactiveInterval(3600);
 
                 resp.sendRedirect(req.getContextPath()+"/ShowMyStockServlet");

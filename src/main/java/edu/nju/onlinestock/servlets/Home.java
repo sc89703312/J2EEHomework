@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.UUID;
 
 /**
  * Created by echo on 16/12/17.
@@ -53,39 +54,15 @@ public class Home extends HttpServlet{
 
             if(request.getParameter("Exit")!=null){
                 session.invalidate();
-                session = null;
                 return;
             }
 
         }else{
             session = request.getSession(true);
+            session.setAttribute("uuid", UUID.randomUUID().toString());
             session.setAttribute("visitor", true);
+            session.setMaxInactiveInterval(3600);
         }
-
-
-
-//        if(session!=null){
-//            System.out.println("session not null");
-//            if(request.getParameter("Login")!=null){
-//                response.sendRedirect(request.getContextPath()+"/Login");
-//            }
-//        }else{
-//
-//            if(request.getParameter("Login")!=null){
-//                System.out.println("Login!");
-//                visitorCounter--;
-//                Context.setAttribute("visitorCounter", Integer.toString(visitorCounter));
-//                response.sendRedirect(request.getContextPath()+"/Login");
-//            }else{
-//                if(request.getParameter("Exit")!=null){
-//                    visitorCounter--;
-//                    Context.setAttribute("visitorCounter", Integer.toString(visitorCounter));
-//                }else{
-//                    visitorCounter++;
-//                    Context.setAttribute("visitorCounter", Integer.toString(visitorCounter));
-//                }
-//            }
-//        }
 
         ServletContext Context= getServletContext();
         int visitorCounter= (int) Context.getAttribute("visitorCounter");
@@ -95,8 +72,8 @@ public class Home extends HttpServlet{
         pw.println("<p>The number of logged in is: "+webCounter+"</p>");
         pw.println("<p>The number of visitors is: "+visitorCounter+"</p>");
 
-        System.out.println("The number of logged in is: "+ webCounter);
-        System.out.println("The number of visitors is: "+ visitorCounter);
+        //System.out.println("The number of logged in is: "+ webCounter);
+        //System.out.println("The number of visitors is: "+ visitorCounter);
     }
 
     /**

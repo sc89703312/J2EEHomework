@@ -43,35 +43,36 @@ public class CounterListener implements ServletContextListener, ServletContextAt
     	ServletContext servletContext= cse.getServletContext();
     	servletContext.setAttribute("webCounter", 0);
 		servletContext.setAttribute("visitorCounter", 0);
-    	System.out.println("Application initialized");
+    	//System.out.println("Application initialized");
     }
 
 	/**
      * @see ServletContextAttributeListener#attributeAdded(ServletContextAttributeEvent)
      */
     public void attributeAdded(ServletContextAttributeEvent arg0) {
-    	System.out.println("ServletContextattribute added");
+    	//System.out.println("ServletContextattribute added");
     }
 
 	/**
      * @see ServletContextAttributeListener#attributeReplaced(ServletContextAttributeEvent)
      */
     public void attributeReplaced(ServletContextAttributeEvent scae) {
-    	System.out.println("ServletContextattribute replaced");
+    	//System.out.println("ServletContextattribute replaced");
     }
 
 	/**
      * @see ServletContextAttributeListener#attributeRemoved(ServletContextAttributeEvent)
      */
     public void attributeRemoved(ServletContextAttributeEvent arg0) {
-    	System.out.println("ServletContextattribute removed");
+    	//System.out.println("ServletContextattribute removed");
     }
 
 	/**
      * @see ServletContextListener#contextDestroyed(ServletContextEvent)
      */
     public void contextDestroyed(ServletContextEvent arg0) {
-    	System.out.println("Application shut down");
+
+		//System.out.println("Application shut down");
     }
 
 }

@@ -80,7 +80,7 @@ public class ShowMyStockServlet extends HttpServlet {
 		} else {
 
 			String loginValue = (String) session.getAttribute("studentId");
-			System.out.println(loginValue + " session");
+			//System.out.println(loginValue + " session");
 
 			req.setAttribute("studentId", loginValue);
 			getStockList(req, resp);
@@ -163,11 +163,11 @@ public class ShowMyStockServlet extends HttpServlet {
 		out.println("<p>Welcome " + req.getAttribute("studentId") + "</p>");
 
 		out.println("我的考试记录:  ");
-		System.out.println("stocklist");
+		//System.out.println("stocklist");
         out.println("<ul>");
 		for (int i = 0; i < list.size(); i++) {
 			Result result = (Result) list.get(i);
-            System.out.println(result.getResult());
+            //System.out.println(result.getResult());
             if(result.getResult() != -1){
                 out.println("<li>"+result.getExam_id()+" : "+result.getResult()+"</li>");
             }else{
