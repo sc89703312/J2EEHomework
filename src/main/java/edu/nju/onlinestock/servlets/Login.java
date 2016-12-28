@@ -2,6 +2,7 @@ package main.java.edu.nju.onlinestock.servlets;
 
 import com.sun.deploy.net.HttpRequest;
 import main.java.edu.nju.onlinestock.factory.DaoFactory;
+import main.java.edu.nju.onlinestock.factory.ServiceFactory;
 import main.java.edu.nju.onlinestock.model.Result;
 import main.java.edu.nju.onlinestock.model.Student;
 import main.java.edu.nju.onlinestock.utils.JDBCConnector;
@@ -98,6 +99,7 @@ public class Login extends HttpServlet {
 
     private void verifyStudent(HttpServletRequest req, HttpServletResponse resp, String studentId){
 
+        System.out.println(ServiceFactory.getStudentService().findStudentById(studentId));
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet result = null;
@@ -125,7 +127,9 @@ public class Login extends HttpServlet {
 
                 resp.sendRedirect(req.getContextPath()+"/ShowMyStockServlet");
             }else{
-                resp.sendError(HttpServletResponse.SC_FORBIDDEN, "User Id not Found");
+                req.setAttribute("studentId",studentId);
+                getServletContext().getRequestDispatcher("/result/nonUser.jsp").forward(req, resp);
+                //resp.sendError(HttpServletResponse.SC_FORBIDDEN, "User Id not Found");
                 result.close();
                 stmt.close();
                 connection.close();
