@@ -13,4 +13,6 @@ public class Result {
     private int exam_id;
     private int result;
 
+    private Exam exam;
+    private Student student;
 }

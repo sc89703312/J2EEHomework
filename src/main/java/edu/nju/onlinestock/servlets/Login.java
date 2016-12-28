@@ -1,7 +1,9 @@
 package main.java.edu.nju.onlinestock.servlets;
 
 import com.sun.deploy.net.HttpRequest;
+import main.java.edu.nju.onlinestock.factory.DaoFactory;
 import main.java.edu.nju.onlinestock.model.Result;
+import main.java.edu.nju.onlinestock.model.Student;
 import main.java.edu.nju.onlinestock.utils.JDBCConnector;
 
 import java.io.IOException;
@@ -11,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.naming.InitialContext;
