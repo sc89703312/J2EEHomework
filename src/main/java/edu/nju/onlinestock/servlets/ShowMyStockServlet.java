@@ -87,7 +87,7 @@ public class ShowMyStockServlet extends HttpServlet {
 			req.setAttribute("studentId", loginValue);
 			req.setAttribute("studentInfo", studentInfo);
 
-			getStockList(req, resp);
+			getResultList(req, resp);
 			injectCounter(req, resp);
 			displayMyStocklistPage(req, resp);
 
@@ -95,7 +95,7 @@ public class ShowMyStockServlet extends HttpServlet {
 
 	}
 
-	public void getStockList(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	public void getResultList(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
 		List<Result> resultList = ServiceFactory.getResultService().
 									getStudentResultList((String)req.getAttribute("studentId"));

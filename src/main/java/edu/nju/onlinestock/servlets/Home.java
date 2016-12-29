@@ -33,15 +33,7 @@ public class Home extends HttpServlet{
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // TODO Auto-generated method stub
-
         HttpSession session = request.getSession(false);
-
-        PrintWriter pw = response.getWriter();
-        RequestDispatcher dispatcher
-                =request.getRequestDispatcher("/user/home.html");
-        if (dispatcher!= null)
-            dispatcher.include(request,response);
-
 
         if(session!=null){
             if(request.getParameter("Login")!=null){
@@ -50,14 +42,18 @@ public class Home extends HttpServlet{
                     session = null;
                 }
                 response.sendRedirect(request.getContextPath()+"/Login");
+                return;
             }
 
             if(request.getParameter("Exit")!=null){
                 session.invalidate();
                 return;
             }
-
         }else{
+
+            if(request.getParameter("Exit")!=null){
+                return;
+            }
             session = request.getSession(true);
             session.setAttribute("uuid", UUID.randomUUID().toString());
             session.setAttribute("visitor", true);
@@ -68,12 +64,13 @@ public class Home extends HttpServlet{
         int visitorCounter= (int) Context.getAttribute("visitorCounter");
         int webCounter = (int) Context.getAttribute("webCounter");
 
+        request.setAttribute("webCounter", webCounter);
+        request.setAttribute("visitorCounter", visitorCounter);
 
-        pw.println("<p>The number of logged in is: "+webCounter+"</p>");
-        pw.println("<p>The number of visitors is: "+visitorCounter+"</p>");
-
-        //System.out.println("The number of logged in is: "+ webCounter);
-        //System.out.println("The number of visitors is: "+ visitorCounter);
+        RequestDispatcher dispatcher
+                =request.getRequestDispatcher("/result/home.jsp");
+        if (dispatcher!= null)
+            dispatcher.include(request,response);
     }
 
     /**

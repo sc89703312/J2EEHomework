@@ -6,7 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8"%>
+         pageEncoding="UTF-8" import="java.lang.*" %>
 <html>
 <head>
     <title>ResultList</title>
@@ -60,10 +60,9 @@
     成绩列表:
 </p>
 
-<TABLE width="60%" border="0" cellpadding="0" cellspacing="1">
+<TABLE width="40%" border="0" cellpadding="0" cellspacing="1">
     <TBODY>
     <TR>
-        <TH width="20%">id</TH>
         <TH width="20%">Exam_id</TH>
         <TH width="20%">Exam_Name</TH>
         <TH width="20%">Result</TH>
@@ -73,13 +72,19 @@
         for (int i = 0; i < list.getStudentResultList().size(); i++) {
             pageContext.setAttribute("item", list.getStudentResult(i));
             pageContext.setAttribute("examItem", list.getStudentResult(i).getExam());
+            pageContext.setAttribute("scoreResult", list.getStudentResult(i).getResult());
     %>
         <TR>
-            <TD align="center"><jsp:getProperty name="item" property="id" /></TD>
             <TD align="center"><jsp:getProperty name="item" property="exam_id"/></TD>
             <TD align="center"><jsp:getProperty name="examItem" property="name"/></TD>
+
+            <% if((int) pageContext.getAttribute("scoreResult") != -1){ %>
             <TD align="center"><jsp:getProperty name="item"
-                    property="result" /></TD>
+                                                property="result" /></TD>
+            <% }else{%>
+            <TD align="center" style="color:red;">未参加!</TD>
+            <% } %>
+
         </TR>
     <%
         }
@@ -90,7 +95,6 @@
 <form method="GET" action="<%= request.getContextPath() %>/Login">
     <input type="submit" name="Logout" value="Logout">
 </form>
-
 <p>Now the number of logged in is: <%= request.getAttribute("webCounter") %></p>
 <p>Now the number of visitors is: <%= request.getAttribute("visitorCounter") %> </p>
 

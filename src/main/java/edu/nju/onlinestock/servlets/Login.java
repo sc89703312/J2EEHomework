@@ -69,20 +69,17 @@ public class Login extends HttpServlet {
             response.sendRedirect(request.getContextPath()+"/ShowMyStockServlet");
         }
 
-        PrintWriter pw = response.getWriter();
-
-        RequestDispatcher dispatcher
-                =request.getRequestDispatcher("/user/login.html");
-        if (dispatcher!= null)
-            dispatcher.include(request,response);
-
-
         ServletContext Context= getServletContext();
         int visitorCounter= (int) Context.getAttribute("visitorCounter");
         int webCounter = (int) Context.getAttribute("webCounter");
 
-        pw.println("<p>The number of logged in is: "+webCounter+"</p>");
-        pw.println("<p>The number of visitors is: "+visitorCounter+"</p>");
+        request.setAttribute("webCounter", webCounter);
+        request.setAttribute("visitorCounter", visitorCounter);
+
+        RequestDispatcher dispatcher
+                =request.getRequestDispatcher("/result/login.jsp");
+        if (dispatcher!= null)
+            dispatcher.include(request,response);
 	}
 
 	/**
