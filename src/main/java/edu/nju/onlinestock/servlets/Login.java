@@ -97,48 +97,61 @@ public class Login extends HttpServlet {
         verifyStudent(request, response, studentId);
     }
 
-    private void verifyStudent(HttpServletRequest req, HttpServletResponse resp, String studentId){
+    private void verifyStudent(HttpServletRequest req, HttpServletResponse resp, String studentId) throws ServletException, IOException{
 
-        System.out.println(ServiceFactory.getStudentService().findStudentById(studentId));
-        Connection connection = null;
-        PreparedStatement stmt = null;
-        ResultSet result = null;
-        ArrayList list = new ArrayList();
-        try {
-            connection = dataSource.getConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        Student loggedStudent = ServiceFactory.getStudentService().findStudentById(studentId);
+        if(loggedStudent != null){
+            HttpSession session = req.getSession(true);
+            session.setAttribute("studentId", studentId);
+            session.setAttribute("visitor", false);
+            session.setMaxInactiveInterval(3600);
+
+            resp.sendRedirect(req.getContextPath()+"/ShowMyStockServlet");
+        }else{
+            req.setAttribute("studentId",studentId);
+            getServletContext().getRequestDispatcher("/result/nonUser.jsp").forward(req, resp);
+            return;
         }
 
-        try {
-            stmt = connection.prepareStatement("select * from student where id=?");
-            stmt.setString(1, studentId);
-            result = stmt.executeQuery();
-            if(result.next()){
-                result.close();
-                stmt.close();
-                connection.close();
-
-                //登录成功后增加在线登录人数
-                HttpSession session = req.getSession(true);
-                session.setAttribute("studentId", studentId);
-                session.setAttribute("visitor", false);
-                session.setMaxInactiveInterval(3600);
-
-                resp.sendRedirect(req.getContextPath()+"/ShowMyStockServlet");
-            }else{
-                req.setAttribute("studentId",studentId);
-                getServletContext().getRequestDispatcher("/result/nonUser.jsp").forward(req, resp);
-                //resp.sendError(HttpServletResponse.SC_FORBIDDEN, "User Id not Found");
-                result.close();
-                stmt.close();
-                connection.close();
-                return;
-            }
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+//        Connection connection = null;
+//        PreparedStatement stmt = null;
+//        ResultSet result = null;
+//        ArrayList list = new ArrayList();
+//        try {
+//            connection = dataSource.getConnection();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            stmt = connection.prepareStatement("select * from student where id=?");
+//            stmt.setString(1, studentId);
+//            result = stmt.executeQuery();
+//            if(result.next()){
+//                result.close();
+//                stmt.close();
+//                connection.close();
+//
+//                //登录成功后增加在线登录人数
+//                HttpSession session = req.getSession(true);
+//                session.setAttribute("studentId", studentId);
+//                session.setAttribute("visitor", false);
+//                session.setMaxInactiveInterval(3600);
+//
+//                resp.sendRedirect(req.getContextPath()+"/ShowMyStockServlet");
+//            }else{
+//                req.setAttribute("studentId",studentId);
+//                getServletContext().getRequestDispatcher("/result/nonUser.jsp").forward(req, resp);
+//                //resp.sendError(HttpServletResponse.SC_FORBIDDEN, "User Id not Found");
+//                result.close();
+//                stmt.close();
+//                connection.close();
+//                return;
+//            }
+//        } catch (Exception e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
 
     }
 }
