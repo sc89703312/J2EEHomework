@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import java.util.List;
 import java.util.Properties;
 
 import javax.naming.InitialContext;
@@ -24,6 +25,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
+import main.java.edu.nju.onlinestock.beans.ResultListBean;
+import main.java.edu.nju.onlinestock.factory.ServiceFactory;
 import main.java.edu.nju.onlinestock.model.Result;
 import main.java.edu.nju.onlinestock.model.Stock;
 import main.java.edu.nju.onlinestock.model.Student;
@@ -36,7 +39,6 @@ import main.java.edu.nju.onlinestock.utils.JDBCConnector;
 @WebServlet("/ShowMyStockServlet")
 public class ShowMyStockServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private DataSource dataSource = null;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -47,7 +49,7 @@ public class ShowMyStockServlet extends HttpServlet {
 	}
 
 	public void init() {
-        dataSource = JDBCConnector.getDataSourceInstance();
+
 	}
 
 	/**
@@ -70,7 +72,7 @@ public class ShowMyStockServlet extends HttpServlet {
 		processRequest(request, response);
 	}
 
-	private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+	private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
 		HttpSession session = req.getSession(false);
 
@@ -79,105 +81,51 @@ public class ShowMyStockServlet extends HttpServlet {
 			resp.sendRedirect(req.getContextPath() + "/Login");
 		} else {
 
+			Student studentInfo = (Student) session.getAttribute("studentInfo");
 			String loginValue = (String) session.getAttribute("studentId");
-			//System.out.println(loginValue + " session");
 
 			req.setAttribute("studentId", loginValue);
+			req.setAttribute("studentInfo", studentInfo);
+
 			getStockList(req, resp);
+			injectCounter(req, resp);
 			displayMyStocklistPage(req, resp);
-			displayLogoutPage(req, resp);
 
 		}
 
 	}
 
-	public void getStockList(HttpServletRequest req, HttpServletResponse res) {
+	public void getStockList(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
-		Connection connection = null;
-		PreparedStatement stmt = null;
-		ResultSet result = null;
-		ArrayList list = new ArrayList();
-		try {
-			connection = dataSource.getConnection();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		List<Result> resultList = ServiceFactory.getResultService().
+									getStudentResultList((String)req.getAttribute("studentId"));
 
-		try {
-			stmt = connection.prepareStatement("select * from result where student_id=?");
-			stmt.setString(1, (String) req.getAttribute("studentId"));
-			result = stmt.executeQuery();
-			while (result.next()) {
-                Result examResult = new Result();
-                examResult.setId(result.getInt("id"));
-                examResult.setStudent_id(result.getInt("student_id"));
-                examResult.setExam_id(result.getInt("exam_id"));
-                examResult.setResult(result.getInt("result"));
-				list.add(examResult);
-			}
+		ResultListBean resultListBean = new ResultListBean();
+		resultListBean.setStudentResultList(resultList);
 
-            result.close();
-            stmt.close();
-            connection.close();
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		req.setAttribute("list", list);
+		req.setAttribute("list", resultListBean);
 
 	}
 
-	public void displayLogoutPage(HttpServletRequest req, HttpServletResponse res) throws IOException {
+	public void injectCounter(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		ServletContext Context= getServletContext();
 		int visitorCounter= (int) Context.getAttribute("visitorCounter");
 		int webCounter = (int) Context.getAttribute("webCounter");
-		
-		PrintWriter out = res.getWriter();
-		out.println("<form method='GET' action='" + res.encodeURL(req.getContextPath() + "/Login") + "'>");
-		out.println("</p>");
-		out.println("<input type='submit' name='Logout' value='Logout'>");
-		out.println("</form>");
-		out.println("</p>Now the number of logged in is: " + webCounter);
-        out.println("</p>Now the number of visitor is: " + visitorCounter);
-		out.println("</body></html>");
+
+		req.setAttribute("webCounter", webCounter);
+		req.setAttribute("visitorCounter", visitorCounter);
 
 	}
 
 	public void displayMyStocklistPage(HttpServletRequest req, HttpServletResponse res) throws IOException {
-		ArrayList list = (ArrayList) req.getAttribute("list"); // resp.sendRedirect(req.getContextPath()+"/MyStockList");
-
-		PrintWriter out = res.getWriter();
-
         RequestDispatcher dispatcher
-                =req.getRequestDispatcher("/user/result.html");
+                =req.getRequestDispatcher("/result/resultList.jsp");
         if (dispatcher!= null){
             try {
-                dispatcher.include(req,res);
+                dispatcher.forward(req,res);
             }catch (Exception e){
-
             }
         }
-
-		out.println("<p>Welcome " + req.getAttribute("studentId") + "</p>");
-
-		out.println("我的考试记录:  ");
-		//System.out.println("stocklist");
-        out.println("<ul>");
-		for (int i = 0; i < list.size(); i++) {
-			Result result = (Result) list.get(i);
-            //System.out.println(result.getResult());
-            if(result.getResult() != -1){
-                out.println("<li>"+result.getExam_id()+" : "+result.getResult()+"</li>");
-            }else{
-                out.println("<li style=\"color: red\">"+result.getExam_id()+" : "+"此次考试未参加!"+"</li>");
-            }
-
-		}
-        out.println("</ul>");
-		out.println("</p>");
-		out.println("Click <a href='" + res.encodeURL(req.getRequestURI()) + "'>here</a> to reload this page.<br>");
 	}
 
 }

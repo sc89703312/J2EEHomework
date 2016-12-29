@@ -36,7 +36,6 @@ import javax.sql.DataSource;
 @WebServlet("/Login")
 public class Login extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    private DataSource dataSource = null;
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -46,7 +45,6 @@ public class Login extends HttpServlet {
     }
 
     public void init(){
-        dataSource = JDBCConnector.getDataSourceInstance();
     }
 
     /**
@@ -103,6 +101,7 @@ public class Login extends HttpServlet {
         if(loggedStudent != null){
             HttpSession session = req.getSession(true);
             session.setAttribute("studentId", studentId);
+            session.setAttribute("studentInfo", loggedStudent);
             session.setAttribute("visitor", false);
             session.setMaxInactiveInterval(3600);
 
@@ -112,46 +111,5 @@ public class Login extends HttpServlet {
             getServletContext().getRequestDispatcher("/result/nonUser.jsp").forward(req, resp);
             return;
         }
-
-//        Connection connection = null;
-//        PreparedStatement stmt = null;
-//        ResultSet result = null;
-//        ArrayList list = new ArrayList();
-//        try {
-//            connection = dataSource.getConnection();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//            stmt = connection.prepareStatement("select * from student where id=?");
-//            stmt.setString(1, studentId);
-//            result = stmt.executeQuery();
-//            if(result.next()){
-//                result.close();
-//                stmt.close();
-//                connection.close();
-//
-//                //登录成功后增加在线登录人数
-//                HttpSession session = req.getSession(true);
-//                session.setAttribute("studentId", studentId);
-//                session.setAttribute("visitor", false);
-//                session.setMaxInactiveInterval(3600);
-//
-//                resp.sendRedirect(req.getContextPath()+"/ShowMyStockServlet");
-//            }else{
-//                req.setAttribute("studentId",studentId);
-//                getServletContext().getRequestDispatcher("/result/nonUser.jsp").forward(req, resp);
-//                //resp.sendError(HttpServletResponse.SC_FORBIDDEN, "User Id not Found");
-//                result.close();
-//                stmt.close();
-//                connection.close();
-//                return;
-//            }
-//        } catch (Exception e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-
     }
 }
