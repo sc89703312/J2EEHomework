@@ -81,13 +81,9 @@ public class ShowMyStockServlet extends HttpServlet {
 			resp.sendRedirect(req.getContextPath() + "/Login");
 		} else {
 
-			Student studentInfo = (Student) session.getAttribute("studentInfo");
 			String loginValue = (String) session.getAttribute("studentId");
 
-			req.setAttribute("studentId", loginValue);
-			req.setAttribute("studentInfo", studentInfo);
-
-			getResultList(req, resp);
+			getResultList(req, resp, loginValue);
 			injectCounter(req, resp);
 			displayMyStocklistPage(req, resp);
 
@@ -95,15 +91,16 @@ public class ShowMyStockServlet extends HttpServlet {
 
 	}
 
-	public void getResultList(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	public void getResultList(HttpServletRequest req, HttpServletResponse res, String studentId) throws ServletException, IOException {
 
 		List<Result> resultList = ServiceFactory.getResultService().
-									getStudentResultList((String)req.getAttribute("studentId"));
+									getStudentResultList(studentId);
 
 		ResultListBean resultListBean = new ResultListBean();
 		resultListBean.setStudentResultList(resultList);
 
-		req.setAttribute("list", resultListBean);
+		HttpSession session = req.getSession(false);
+		session.setAttribute("list", resultListBean);
 
 	}
 
@@ -112,9 +109,10 @@ public class ShowMyStockServlet extends HttpServlet {
 		int visitorCounter= (int) Context.getAttribute("visitorCounter");
 		int webCounter = (int) Context.getAttribute("webCounter");
 
-		req.setAttribute("webCounter", webCounter);
-		req.setAttribute("visitorCounter", visitorCounter);
+		HttpSession session = req.getSession(false);
 
+		session.setAttribute("webCounter", webCounter);
+		session.setAttribute("visitorCounter", visitorCounter);
 	}
 
 	public void displayMyStocklistPage(HttpServletRequest req, HttpServletResponse res) throws IOException {

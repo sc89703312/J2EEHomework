@@ -7,8 +7,11 @@
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" import="java.lang.*" %>
+<%@ taglib prefix="session" uri="/WEB-INF/tlds/session.tld" %>
+<%@ page session="true" %>
 <html>
 <head>
+    <session:checkSession/>
     <title>ResultList</title>
     <script type="text/javascript">
         var stayonthis = true;
@@ -36,10 +39,10 @@
 <body>
 
 <jsp:useBean id="studentInfo" class="main.java.edu.nju.onlinestock.model.Student"
-             scope="request"/>
+             scope="session"/>
 <jsp:useBean id="list"
              type="main.java.edu.nju.onlinestock.beans.ResultListBean"
-             scope="request"/>
+             scope="session"/>
 <jsp:useBean id="item" class="main.java.edu.nju.onlinestock.model.Result"
              scope="page"/>
 <jsp:useBean id="examItem" class="main.java.edu.nju.onlinestock.model.Exam"
@@ -47,7 +50,7 @@
 
 <table width="650" border="0" >
     <tr>
-        <td width="650" height="80" background="/onlineStockWeb03/image/top.jpg">&nbsp;</td>
+        <td width="650" height="80" background=<%= request.getContextPath() %>/image/top.jpg>&nbsp;</td>
     </tr>
 </table>
 
@@ -95,8 +98,8 @@
 <form method="GET" action="<%= request.getContextPath() %>/Login">
     <input type="submit" name="Logout" value="Logout">
 </form>
-<p>Now the number of logged in is: <%= request.getAttribute("webCounter") %></p>
-<p>Now the number of visitors is: <%= request.getAttribute("visitorCounter") %> </p>
+<p>Now the number of logged in is: <%= session.getAttribute("webCounter") %></p>
+<p>Now the number of visitors is: <%= session.getAttribute("visitorCounter") %> </p>
 
 </body>
 </html>
