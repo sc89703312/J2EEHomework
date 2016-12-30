@@ -8,6 +8,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" import="java.lang.*" %>
 <%@ taglib prefix="session" uri="/WEB-INF/tlds/session.tld" %>
+<%@ taglib prefix="counter" uri="/WEB-INF/tlds/counter.tld" %>
 <%@ page session="true" %>
 <html>
 <head>
@@ -98,8 +99,7 @@
 <form method="GET" action="<%= request.getContextPath() %>/Login">
     <input type="submit" name="Logout" value="Logout">
 </form>
-<p>Now the number of logged in is: <%= session.getAttribute("webCounter") %></p>
-<p>Now the number of visitors is: <%= session.getAttribute("visitorCounter") %> </p>
 
+<counter:webCounter/>
 </body>
 </html>

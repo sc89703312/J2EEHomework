@@ -69,13 +69,6 @@ public class Login extends HttpServlet {
             response.sendRedirect(request.getContextPath()+"/ShowMyStockServlet");
         }
 
-        ServletContext Context= getServletContext();
-        int visitorCounter= (int) Context.getAttribute("visitorCounter");
-        int webCounter = (int) Context.getAttribute("webCounter");
-
-        request.setAttribute("webCounter", webCounter);
-        request.setAttribute("visitorCounter", visitorCounter);
-
         RequestDispatcher dispatcher
                 =request.getRequestDispatcher("/result/login.jsp");
         if (dispatcher!= null)

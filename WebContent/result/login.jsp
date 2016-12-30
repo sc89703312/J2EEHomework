@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page session="false" %>
+<%@ taglib prefix="counter" uri="/WEB-INF/tlds/counter.tld" %>
 <html>
 <head>
     <title>Title</title>
@@ -48,9 +49,7 @@
 </table>
 </p>
 
-<p>Now the number of logged in is: <%= request.getAttribute("webCounter") %></p>
-<p>Now the number of visitors is: <%= request.getAttribute("visitorCounter") %> </p>
-
+<counter:webCounter/>
 
 </body>
 </html>

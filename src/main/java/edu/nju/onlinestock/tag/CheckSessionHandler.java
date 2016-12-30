@@ -12,6 +12,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 public class CheckSessionHandler extends TagSupport {
 
     public int doEndTag() throws JspException {
+
         HttpSession session = pageContext.getSession();
 
         if(session.getAttribute("studentId") == null){

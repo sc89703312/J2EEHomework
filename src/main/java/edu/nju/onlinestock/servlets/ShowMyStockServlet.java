@@ -82,9 +82,7 @@ public class ShowMyStockServlet extends HttpServlet {
 		} else {
 
 			String loginValue = (String) session.getAttribute("studentId");
-
 			getResultList(req, resp, loginValue);
-			injectCounter(req, resp);
 			displayMyStocklistPage(req, resp);
 
 		}
@@ -102,17 +100,6 @@ public class ShowMyStockServlet extends HttpServlet {
 		HttpSession session = req.getSession(false);
 		session.setAttribute("list", resultListBean);
 
-	}
-
-	public void injectCounter(HttpServletRequest req, HttpServletResponse res) throws IOException {
-		ServletContext Context= getServletContext();
-		int visitorCounter= (int) Context.getAttribute("visitorCounter");
-		int webCounter = (int) Context.getAttribute("webCounter");
-
-		HttpSession session = req.getSession(false);
-
-		session.setAttribute("webCounter", webCounter);
-		session.setAttribute("visitorCounter", visitorCounter);
 	}
 
 	public void displayMyStocklistPage(HttpServletRequest req, HttpServletResponse res) throws IOException {

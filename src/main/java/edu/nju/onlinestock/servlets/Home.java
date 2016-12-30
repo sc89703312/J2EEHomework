@@ -39,7 +39,6 @@ public class Home extends HttpServlet{
             if(request.getParameter("Login")!=null){
                 if((Boolean)session.getAttribute("visitor")){
                     session.invalidate();
-                    session = null;
                 }
                 response.sendRedirect(request.getContextPath()+"/Login");
                 return;
@@ -59,13 +58,6 @@ public class Home extends HttpServlet{
             session.setAttribute("visitor", true);
             session.setMaxInactiveInterval(3600);
         }
-
-        ServletContext Context= getServletContext();
-        int visitorCounter= (int) Context.getAttribute("visitorCounter");
-        int webCounter = (int) Context.getAttribute("webCounter");
-
-        request.setAttribute("webCounter", webCounter);
-        request.setAttribute("visitorCounter", visitorCounter);
 
         RequestDispatcher dispatcher
                 =request.getRequestDispatcher("/result/home.jsp");

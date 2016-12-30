@@ -5,8 +5,17 @@
   Time: 下午10:09
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" import="java.util.*" %>
 <%@ page session="false" %>
+<%@ taglib prefix="counter" uri="/WEB-INF/tlds/counter.tld" %>
+<%
+    if(request.getSession(false) == null){
+        HttpSession session = request.getSession(true);
+        session.setAttribute("uuid", UUID.randomUUID().toString());
+        session.setAttribute("visitor", true);
+        session.setMaxInactiveInterval(3600);
+    }
+%>
 <html>
 <head>
     <title>Welcome!</title>
@@ -43,8 +52,7 @@
     <input type='submit' name='Login' value='Login'>
 </form>
 
-<p>Now the number of logged in is: <%= request.getAttribute("webCounter") %></p>
-<p>Now the number of visitors is: <%= request.getAttribute("visitorCounter") %> </p>
 
+<counter:webCounter/>
 </body>
 </html>
