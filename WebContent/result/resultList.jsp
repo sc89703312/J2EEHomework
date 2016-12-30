@@ -56,8 +56,8 @@
 </table>
 
 <p>Welcome!
-    <jsp:getProperty name="studentInfo" property="grade" />
-    <jsp:getProperty name="studentInfo" property="name" />
+    ${studentInfo.grade}
+    ${studentInfo.name}
 </p>
 
 <p>
@@ -79,12 +79,11 @@
             pageContext.setAttribute("scoreResult", list.getStudentResult(i).getResult());
     %>
         <TR>
-            <TD align="center"><jsp:getProperty name="item" property="exam_id"/></TD>
-            <TD align="center"><jsp:getProperty name="examItem" property="name"/></TD>
+            <TD align="center">${item.exam_id}</TD>
+            <TD align="center">${examItem.name}</TD>
 
             <% if((int) pageContext.getAttribute("scoreResult") != -1){ %>
-            <TD align="center"><jsp:getProperty name="item"
-                                                property="result" /></TD>
+            <TD align="center">${item.result}</TD>
             <% }else{%>
             <TD align="center" style="color:red;">未参加!</TD>
             <% } %>

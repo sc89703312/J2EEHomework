@@ -48,7 +48,7 @@
 </table>
 
 <p>This is the Home Page for all visitors without auth</p>
-<form action="/onlineStockWeb03/Home" method='GET'>
+<form action=<%= request.getContextPath() %>/Home method='GET'>
     <input type='submit' name='Login' value='Login'>
 </form>
 

@@ -15,19 +15,19 @@
 <body>
 <table width="650" border="0" >
     <tr>
-        <td width="650" height="80" background="/onlineStockWeb03/image/top.jpg">&nbsp;</td>
+        <td width="650" height="80" background= <%= request.getContextPath() %>/image/top.jpg>&nbsp;</td>
     </tr>
 </table>
 
 <br>
-<a href="/onlineStockWeb03/Home">主页</a>
+<a href=<%= request.getContextPath() %>/Home>主页</a>
 <br>
 
 <p>
 <table width=650>
     <tr>
         <td>
-            <form name="loginForm" id="loginForm" action="/onlineStockWeb03/Login" method="post">
+            <form name="loginForm" id="loginForm" action=<%= request.getContextPath() %>/Login method="post">
                 <table align="center" border="0">
                     <tr>
                         <td>StudentId</td>
